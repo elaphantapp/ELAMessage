@@ -19,8 +19,14 @@ $(function () {
 
 	window.elaMsg = new ElaMessage(crypton);
 
-	window.currentName = "songsjun";
-	window.currentAddress = "Eg2pnvwabKCHshrpY7io52RMXqwbyTNoKj";
+	let params = new URLSearchParams(document.location.search.substring(1));
+	window.currentName = params.get("name");//"songsjun";
+	window.currentAddress = params.get("address");//"songsjun";
+
+	// await Crypton.QueryKey(currentName, "ela.address");
+	// Crypton.QueryKey(currentName, "ela.address").then(function(addr) {
+	// 	window.currentAddress = addr;	
+	// });
 
 	window.groupBy = function(xs, myname) {
 		var ret = {};
