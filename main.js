@@ -37,7 +37,7 @@ $(function () {
 		var random = Math.floor(Math.random() * 100000000);
 		setProfile("random", random);
 		var url = "https://launch.elaphant.app/?appName=ELAMessage&appTitle=ELAMessage&autoRedirect=True&redirectURL=elaphant%3A%2F%2Fidentity%3FAppID%3Dac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290%26AppName%3DMini%20Apps%26RandomNumber%3D"+random+"%26DID%3DibxNTG1hBPK1rZuoc8fMy4eFQ96UYDAQ4J%26PublicKey%3D034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55%26ReturnUrl%3Dhttps%253A%252F%252Felamessage.elaphant.app%26RequestInfo%3DELAAddress%2CBTCAddress%2CETHAddress"
-		window.open(url);		
+		window.location.href = url;		
 	}
 
 	let params = new URLSearchParams(document.location.search.substring(1));
@@ -69,7 +69,7 @@ $(function () {
 			},
 			methods: {
 				async save() {
-					var myName = this.myName;
+					var myName = this.myName.toLowerCase();
 
 					var owner = await elaMsg._getOwner(myName);
 					var nameInfo = await elaMsg._getNameInfo(myName);
@@ -228,7 +228,7 @@ $(function () {
 		},
 		methods: {
 			save() {
-				var subscription = this.subscriptionName;
+				var subscription = this.subscriptionName.toLowerCase();
 
 				messageWall.following.push({subscription:[]});
 
@@ -263,7 +263,7 @@ $(function () {
 		},
 		methods: {
 			async checkRecipient() {
-				var receiver = this.recipient; 
+				var receiver = this.recipient.toLowerCase(); 
 
 				var bForce = false;
 
@@ -309,7 +309,7 @@ $(function () {
 				elaMsg.sendMessage(currentName, receiver, "","MSG", message, amount).then (function(url) {
 					console.log(url);
 					$('#sendMessageDialog').modal("hide");
-					window.open(url, '_blank');
+					window.location.href = url;
 				})
 			}
 		},
