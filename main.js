@@ -69,7 +69,7 @@ $(function () {
 			},
 			methods: {
 				async save() {
-					var myName = this.myName.toLowerCase();
+					var myName = this.myName.trim().toLowerCase();
 
 					var owner = await elaMsg._getOwner(myName);
 					var nameInfo = await elaMsg._getNameInfo(myName);
@@ -228,7 +228,7 @@ $(function () {
 		},
 		methods: {
 			save() {
-				var subscription = this.subscriptionName.toLowerCase();
+				var subscription = this.subscriptionName.trim().toLowerCase();
 
 				messageWall.following.push({subscription:[]});
 
@@ -263,7 +263,7 @@ $(function () {
 		},
 		methods: {
 			async checkRecipient() {
-				var receiver = this.recipient.toLowerCase(); 
+				var receiver = this.recipient.trim().toLowerCase(); 
 
 				var bForce = false;
 
@@ -287,8 +287,8 @@ $(function () {
 
 			},
 			sendMessage() {
-				var receiver = this.recipient;
-				var message = this.messageBody;
+				var receiver = this.recipient.trim().toLowerCase();
+				var message = this.messageBody.trim();
 				var amount = this.amount;
 
 				if (receiver.length < 1) {
