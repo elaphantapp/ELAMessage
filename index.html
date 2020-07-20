@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v4.0.1">
-    <title>Offcanvas template · Bootstrap</title>
+    <title>ELA Message - elastos&elaphant chat</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/offcanvas/">
 
@@ -45,44 +45,18 @@
 
 
       <div id="messageWall" class="my-3 p-3 bg-white rounded shadow-sm">
-        <h4 class="border-bottom border-gray pb-2 mb-0"><b>Popular Channels</b></h4>
+        <h4 class="border-bottom border-gray pb-2 mb-0"><b>Channels({{ Object.keys(following).length }})</b></h4>
         <div class="list-group list-group-flush">
-          <a href="#" data-toggle="modal" data-target="#messagesListView"  class="list-group-item list-group-item-action">
+          <a href="#" data-toggle="modal" data-target="#messagesListView"  class="list-group-item list-group-item-action" v-for="(value, key, index) in following" v-if="index<5">
             <div class="row">
               <div class="col-10">
                 <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1">elastos</h5>
+                  <h5 class="mb-1">#{{ key }}</h5>
                 </div>
-                <small>badge badge-primary badge-pill.</small>
+                <!--small>badge badge-primary badge-pill.</small-->
               </div>
               <div class="col-2 text-right">
-                  <span class="badge badge-primary badge-pill">14</span>
-              </div>
-            </div>
-          </a>
-          <a href="#" data-toggle="modal" data-target="#messagesListView"  class="list-group-item list-group-item-action">
-            <div class="row">
-              <div class="col-10">
-                <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1">elaphant</h5>
-                </div>
-                <small>badge badge-primary badge-pill.</small>
-              </div>
-              <div class="col-2 text-right">
-                  <span class="badge badge-primary badge-pill">14</span>
-              </div>
-            </div>
-          </a>
-          <a href="#" data-toggle="modal" data-target="#messagesListView"  class="list-group-item list-group-item-action">
-            <div class="row">
-              <div class="col-10">
-                <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1">greenpass</h5>
-                </div>
-                <small>badge badge-primary badge-pill.</small>
-              </div>
-              <div class="col-2 text-right">
-                  <span class="badge badge-primary badge-pill">14</span>
+                  <span class="badge badge-secondary badge-pill">{{ value?value.length:0 }}</span>
               </div>
             </div>
           </a>
@@ -92,15 +66,15 @@
             <a href="#" data-toggle="modal" data-target="#newSubscriptionDialog">+Follow</a>
           </small>
           <small class="d-block text-right mt-3 col">
-            <a href="#" data-toggle="modal" data-target="#cryptoNameListView">+View All</a>
+            <a href="#" data-toggle="modal" data-target="#cryptoNameListView" data-whatever="channel">+View All</a>
           </small>
         </div>
       </div>
 
       <div id="personalMessage" class="my-3 p-3 bg-white rounded shadow-sm">
-        <h4 class="border-bottom border-gray pb-2 mb-0"><b>Recent Messages</b></h4>
+        <h4 class="border-bottom border-gray pb-2 mb-0"><b>Messages({{ Object.keys(messages).length }})</b></h4>
         <div class="list-group list-group-flush">
-          <a href="#" data-toggle="modal" data-target="#messagesListView" data-whatever="messages" v-for="(value, key) in messages" class="list-group-item list-group-item-action">
+          <a href="#" data-toggle="modal" data-target="#messagesListView" data-whatever="messages" v-for="(value, key, index) in messages" v-if="index<5" class="list-group-item list-group-item-action">
             <div class="row">
               <div class="col-10">
                 <div class="d-flex w-100 justify-content-between">
@@ -109,7 +83,7 @@
                 <!--small>badge badge-primary badge-pill.</small-->
               </div>
               <div class="col-2 text-right">
-                  <span class="badge badge-primary badge-pill">{{ value.length }}</span>
+                  <span class="badge badge-secondary badge-pill">{{ value.length }}</span>
               </div>
             </div>
           </a>
@@ -119,61 +93,33 @@
             <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="newMessage">+New</a>
           </small>
           <small class="d-block text-right mt-3 col">
-            <a href="#" data-toggle="modal" data-target="#cryptoNameListView">+View All</a>
+            <a href="#" data-toggle="modal" data-target="#cryptoNameListView" data-whatever="messages">+View All</a>
           </small>
         </div>
       </div>
-
-
 
 
       <div class="modal fade show" id="cryptoNameListView" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-modal="true" style="display: none;">
         <div class="modal-dialog modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalScrollableTitle">Burn</h5>
+              <h5 class="modal-title" id="exampleModalScrollableTitle">List</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
               </button>
             </div>
             <div class="modal-body">
               <div class="list-group list-group-flush">
-                <a href="#" data-toggle="modal" data-target="#messagesListView" class="list-group-item list-group-item-action">
+                <a href="#" data-toggle="modal" data-target="#messagesListView" data-whatever="messages" v-for="(value, key, index) in messages" class="list-group-item list-group-item-action">
                   <div class="row">
                     <div class="col-10">
                       <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">burn</h5>
+                        <h5 class="mb-1">@{{ key }}</h5>
                       </div>
-                      <small>Candy is 0.000001 ELA.</small>
+                      <!--small>badge badge-primary badge-pill.</small-->
                     </div>
                     <div class="col-2 text-right">
-                        <span class="badge badge-primary badge-pill">14</span>
-                    </div>
-                  </div>
-                </a>
-                <a href="#" data-toggle="modal" data-target="#messagesListView"  class="list-group-item list-group-item-action">
-                  <div class="row">
-                    <div class="col-10">
-                      <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">burn</h5>
-                      </div>
-                      <small>Candy is 0.000001 ELA.</small>
-                    </div>
-                    <div class="col-2 text-right">
-                        <span class="badge badge-primary badge-pill">14</span>
-                    </div>
-                  </div>
-                </a>
-                <a href="#" data-toggle="modal" data-target="#messagesListView"  class="list-group-item list-group-item-action">
-                  <div class="row">
-                    <div class="col-10">
-                      <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">burn</h5>
-                      </div>
-                      <small>Candy is 0.000001 ELA.</small>
-                    </div>
-                    <div class="col-2 text-right">
-                        <span class="badge badge-primary badge-pill">14</span>
+                        <span class="badge badge-secondary badge-pill">{{ value.length }}</span>
                     </div>
                   </div>
                 </a>
@@ -211,11 +157,25 @@
               <div class="list-group list-group-flush">
                  <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" class="list-group-item list-group-item-action" v-for="msg in messages">
                   <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ currentName==msg.t? "From @"+msg.f : "To @"+msg.t }}</h5>
-                    <small>{{ moment(msg.timestamp*1000).format("DD-MM-YYYY h:mm:ss") }}</small>
+
+                    <h5 class="mb-1">
+                      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg" v-if="currentName==msg.t">
+                        <path fill-rule="evenodd" d="M4.646 8.146a.5.5 0 0 1 .708 0L8 10.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
+                        <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0v-9A.5.5 0 0 1 8 1z"/>
+                        <path fill-rule="evenodd" d="M1.5 13.5A1.5 1.5 0 0 0 3 15h10a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 13 4h-1.5a.5.5 0 0 0 0 1H13a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5v-8A.5.5 0 0 1 3 5h1.5a.5.5 0 0 0 0-1H3a1.5 1.5 0 0 0-1.5 1.5v8z"/>
+                      </svg>
+                      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg" v-if="currentName!=msg.t">
+                        <path fill-rule="evenodd" d="M4.646 4.354a.5.5 0 0 0 .708 0L8 1.707l2.646 2.647a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 0 0 0 .708z"/>
+                        <path fill-rule="evenodd" d="M8 11.5a.5.5 0 0 0 .5-.5V2a.5.5 0 0 0-1 0v9a.5.5 0 0 0 .5.5z"/>
+                        <path fill-rule="evenodd" d="M2.5 14A1.5 1.5 0 0 0 4 15.5h8a1.5 1.5 0 0 0 1.5-1.5V7A1.5 1.5 0 0 0 12 5.5h-1.5a.5.5 0 0 0 0 1H12a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5H4a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 0 0-1H4A1.5 1.5 0 0 0 2.5 7v7z"/>
+                      </svg>
+                      {{ currentName==msg.t? msg.f : msg.t }}
+                    </h5>
+                    <small>{{ moment(msg.timestamp*1000).format("DD-MM-YYYY h:mm") }}</small>
                   </div>
                   <p class="mb-1">{{ msg.m }}</p>
                   <small>Candy is {{ msg.amount/100000000 }} ELA.</small>
+                  <small>{{ currentName==msg.t? "["+msg.input.slice(0, 4)+"..."+msg.input.slice(-8)+"]" : "["+msg.output.slice(0, 4)+"..."+msg.output.slice(-8)+"]" }}</small>
                 </a>
               </div>
             </div>
@@ -237,14 +197,39 @@
             <div class="modal-body">
               <form>
                 <div class="form-group">
-                  <label for="recipient-name" class="col-form-label">Topic:</label>
-                  <input type="text" placeholder="CryptoName" class="form-control" id="recipient-name">
+                  <label for="recipient-name" class="col-form-label">CryptoName:</label>
+                  <input type="text" placeholder="Types the CryptoName" class="form-control" id="subscription-name" v-model="subscriptionName">
                 </div>
               </form>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Subscription</button>
+              <button type="button" class="btn btn-primary" v-on:click="save">Subscription</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal fade" id="settingNameDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Setting your CryptoName</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-group">
+                  <label for="recipient-name" class="col-form-label">CryptoName:</label>
+                  <input type="text" placeholder="Types the CryptoName" class="form-control" id="my-name" v-model="myName">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" v-on:click="save">Save</button>
             </div>
           </div>
         </div>
@@ -265,17 +250,13 @@
                 {{ quote }}
               </p>
               <form>
-                <div class="form-group" v-if="recipient.length != ''">
-                  <label for="recipient-name" class="col-form-label">Recipient: </label>
-                  <label placeholder="Select your CryptoName" class="form-control" id="receiver-name">{{ recipient }}</label>
-                </div>
-                <div class="form-group" v-if="recipient.length == ''">
+                <div class="form-group">
                   <label for="recipient-name" class="col-form-label">To: </label>
-                  <input type="text" placeholder="Select your CryptoName" class="form-control" id="receiver-name">
+                  <input type="text" placeholder="Select your CryptoName" class="form-control" id="receiver-name" @blur="checkRecipient" v-model="recipient">
                 </div>
                 <div class="form-group">
                   <label for="message-text" class="col-form-label">Message:</label>
-                  <textarea rows="4" class="form-control" placeholder="The maximum length is 140 characters. The message will be publicly stored on the blockchain forever in text. Anyone can read it." id="message-text"></textarea>
+                  <textarea rows="4" class="form-control" placeholder="The maximum length is 140 characters. The message will be publicly stored on the blockchain forever in text. Anyone can read it." id="message-text" v-model="messageBody"></textarea>
                 </div>
                 <div class="form-group">
                   <label for="recipient-name" class="col-form-label">Who am I:</label>
@@ -283,13 +264,13 @@
                 </div>
                 <div class="form-group">
                   <label for="recipient-name" class="col-form-label">Candy(ELA):</label>
-                  <input type="text" class="form-control" id="send-amount" value="0.000001">
+                  <input type="text" class="form-control" id="send-amount" value="0.000001" v-model="amount">
                 </div>
               </form>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" v-on:click="sendMessage">Send message</button>
+              <button type="button" class="btn btn-primary" v-on:click="sendMessage" :disabled="recipientChecked != 1 && recipient.length==0">Send message</button>
             </div>
           </div>
         </div>

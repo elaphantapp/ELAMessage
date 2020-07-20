@@ -33,9 +33,8 @@ class ElaMessage {
 					var fromAddress = item.input;
 					var obj = item;
 					if (elaAddress != fromAddress) {
-						pthis._getKeyOfName(obj.f, "ela.address").then (function(address) {
-							if (address == fromAddress)
-								obj["verify"] = true;
+						pthis._checkKeyOfName(obj.f, "ela.address", fromAddress).then (function(result) {
+							obj["verify"] = result;
 						})
 					}
 				})();
@@ -51,26 +50,41 @@ class ElaMessage {
 
 	async sendMessage(sender, receiver, replyto, cmd, message, amount) {
 		if (cmd !="MSG" && cmd != "WAL") return "";
+
 		var pthis = this;
-		var nameInfo;
-		return this._getNameInfo(receiver).then(function(obj) {
-			nameInfo = obj;
-			return pthis._getOwner(receiver).then(function(owner) {
+		return this._getKeyOfName(receiver, "ela.address").then(function(addr) {
+			var msg = {
+				"f":sender.toLowerCase(),
+				"t":receiver.toLowerCase(),
+				"r":replyto,
+				"m":encodeURIComponent(message)
+			};
 
-				if (pthis._verifyMessagerName(nameInfo, owner)) {
-					var msg = {
-						"f":sender.toLowerCase(),
-						"t":receiver.toLowerCase(),
-						"r":replyto,
-						"m":encodeURIComponent(message)
-					};
-					var address = nameInfo["ela.address"];
-
-					return pthis.generatSendRequirment(address, cmd, msg, amount);
-				}
-
-			})
+			return pthis.generatSendRequirment(addr, cmd, msg, amount);
 		});
+
+
+
+		// var pthis = this;
+		// var nameInfo;
+		// return this._getNameInfo(receiver).then(function(obj) {
+		// 	nameInfo = obj;
+		// 	return pthis._getOwner(receiver).then(function(owner) {
+
+		// 		if (pthis._verifyMessagerName(nameInfo, owner)) {
+		// 			var msg = {
+		// 				"f":sender.toLowerCase(),
+		// 				"t":receiver.toLowerCase(),
+		// 				"r":replyto,
+		// 				"m":encodeURIComponent(message)
+		// 			};
+		// 			var address = nameInfo["ela.address"];
+
+		// 			return pthis.generatSendRequirment(address, cmd, msg, amount);
+		// 		}
+
+		// 	})
+		// });
 
 	}
 
@@ -93,7 +107,7 @@ class ElaMessage {
 									obj["input"] = item.Inputs[0];
 									obj["output"] = item.Outputs[0];
 									obj["height"] = item.Height;
-									obj["amount"] = item.Value - item.NodeFee;
+									obj["amount"] = (item.Type=="income") ? item.Value : (item.Value - item.NodeFee);
 									obj["timestamp"] = item.CreateTime;
 									obj["verify"] = false;
 									result.push(obj);
@@ -116,13 +130,13 @@ class ElaMessage {
 					"AppID%3Dac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290%26"+
 					"AppName%3DMini%2520Apps%26Description%3DMini%2520Apps%26PublicKey%3D034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55%26"+
 					"OrderID%3D"+cmd+"%3A"+base64+"%26CoinName%3DELA%26"+
-					"ReceivingAddress%3D"+address+"%26ReturnUrl%3Dhttps%3A%2F%2Fsjunsong.elastos.name%26Amount%3D"+amount;
+					"ReceivingAddress%3D"+address+"%26ReturnUrl%3Dhttps%3A%2F%2Felamessage.elaphant.app%26Amount%3D"+amount;
 		return url;
 	}
 
-	async _getOwner(name) {
+	async _getOwner(name, force) {
 		var cache = localStorage.getItem(name+"_getOwner");
-		if (cache) {
+		if (cache && !force) {
 			return JSON.parse(cache).value;
 		}
 		return this._crypton.getOwnerOfNameToken(name).then(function(value) {
@@ -131,9 +145,9 @@ class ElaMessage {
 		});
 	}
 
-	async _getNameInfo(name) {
+	async _getNameInfo(name, force) {
 		var cache = localStorage.getItem(name+"_getNameInfo");
-		if (cache) {
+		if (cache && !force) {
 			return JSON.parse(cache).value;
 		}
 		return Crypton.QueryName(name).then(function(value) {
@@ -143,9 +157,22 @@ class ElaMessage {
 		});
 	}
 
-	async _getKeyOfName(name, key) {
+	async _checkKeyOfName(name, key, value) {
 		var cache = localStorage.getItem(name+"_getKeyOfName_"+key);
 		if (cache) {
+			if (JSON.parse(cache).value == value)
+				return true;
+		}
+		return Crypton.QueryKey(name, key).then(function(val) {
+			localStorage.setItem(name+"_getKeyOfName_"+key, JSON.stringify({"timestamp": Date.now(), "value":val}));
+
+			return val == value;
+		});
+	}
+
+	async _getKeyOfName(name, key, force) {
+		var cache = localStorage.getItem(name+"_getKeyOfName_"+key);
+		if (cache && !force) {
 			return JSON.parse(cache).value;
 		}
 		return Crypton.QueryKey(name, key).then(function(value) {

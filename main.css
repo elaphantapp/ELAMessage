@@ -50,3 +50,9 @@ body {
 .page-footer {
   font-size: 0.8rem;
 }
+
+.mb-1 {
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
