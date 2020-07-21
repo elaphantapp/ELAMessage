@@ -110,7 +110,7 @@ $(function () {
 
 	window.currentDID = currentDID;
 	window.currentName = currentName;
-	window.currentAddress = currentName;
+	window.currentAddress = currentAddress;
 	window.returnURL = window.location.href.split('?')[0];
 
 	window.groupBy = function(xs, myname) {
@@ -144,10 +144,16 @@ $(function () {
 
 			for (var key in this.following) {
 				(async function() {
-					var target = key;
-					var address = await elaMsg._getKeyOfName(target, "ela.address");
-					var result = await elaMsg.getMyMessages(address, "WAL", target, 0, 100);
-					pthis.following[target] = result;
+					try {
+						var target = key;
+						var address = await elaMsg._getKeyOfName(target, "ela.address");
+						if (address.length < 34 )
+							return;
+						var result = await elaMsg.getMyMessages(address, "WAL", target, 0, 100);
+						pthis.following[target] = result;
+					} catch (err) {
+						console.log(err);
+					}
 				})();
 			}
 		}
