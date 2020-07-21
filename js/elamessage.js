@@ -196,16 +196,16 @@ class ElaMessage {
 	}
 
 	_verifyMessageWallName(nameObject, owner) {
-		if (getDid(nameObject.publickey) != nameObject.did 
-			|| getAddress(nameObject.publickey) != nameObject["ela.address"])
+		if (getDid(nameObject.publickey).toLowerCase() != nameObject.did.toLowerCase() 
+			|| getAddress(nameObject.publickey).toLowerCase() != nameObject["ela.address"].toLowerCase())
 			return false;
-		return verify(nameObject.name+".elastos.namemessagewall"+owner, nameObject.messagewall, nameObject.publickey);
+		return verify(nameObject.name.toLowerCase()+".elastos.namemessagewall"+owner.toLowerCase(), nameObject.messagewall, nameObject.publickey);
 	}
 
 	_verifyMessagerName(nameObject, owner) {
-		if (getDid(nameObject.publickey) != nameObject.did 
-			|| getAddress(nameObject.publickey) != nameObject["ela.address"])
+		if (getDid(nameObject.publickey).toLowerCase() != nameObject.did.toLowerCase()
+			|| getAddress(nameObject.publickey).toLowerCase() != nameObject["ela.address"].toLowerCase())
 			return false;
-		return verify(nameObject.name+".elastos.namemessenger"+owner, nameObject.messenger, nameObject.publickey);
+		return verify(nameObject.name.toLowerCase()+".elastos.namemessenger"+owner.toLowerCase(), nameObject.messenger, nameObject.publickey);
 	}
 };
