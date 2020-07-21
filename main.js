@@ -85,7 +85,6 @@ $(function () {
 						alert("Failed to set name!");
 						$("#settingNameDialog").modal("hide");
 					}
-
 				}
 			},
 			created () {
@@ -126,7 +125,8 @@ $(function () {
 	window.messageWall = new Vue({
 		el:"#messageWall",
 		data: {
-			"following": {"elastos":[], "elaphant":[], "bbs":[]}
+			"following": [],
+			"followingData": {"elastos":[], "elaphant":[], "bbs":[]}
 		},
 		methods: {
 
@@ -138,11 +138,11 @@ $(function () {
 			if (myFollowing) {
 				var temps = JSON.parse(myFollowing);
 				for (var item of temps) {
-					this.following.push({item:[]});
+					this.followingData[item] = [];
 				}
 			}
 
-			for (var key in this.following) {
+			for (var key in this.followingData) {
 				(async function() {
 					try {
 						var target = key;
@@ -150,7 +150,10 @@ $(function () {
 						if (address.length < 34 )
 							return;
 						var result = await elaMsg.getMyMessages(address, "WAL", target, 0, 100);
-						pthis.following[target] = result;
+						if (result && result.length > 0) {
+							//delete pthis.folloing[target];
+							pthis.following.push({"key":target, "value":result});
+						}
 					} catch (err) {
 						console.log(err);
 					}
@@ -203,10 +206,13 @@ $(function () {
 	window.messagesListView = new Vue({
 		el:"#messagesListView",
 		data: {
-			messages:[]
+			"cryptoname":"",
+			"title":"",
+			"type":"",
+			"cmd":"",
+			"messages":[]
 		},
 		methods: {
-
 		},
 		created () {
 
@@ -217,13 +223,23 @@ $(function () {
   		var target = button.data('whatever');
 
   		if (target.indexOf("messages") == 0) {
-
   			var name = $(e.relatedTarget).find(".mb-1").text();
-
+  			messagesListView.cryptoname = name.substring(1);
+  			messagesListView.title = name+" Messages";
+  			messagesListView.type = "Reply";
+  			messagesListView.cmd = "MSG";
   			messagesListView.messages = personalMessage.messages[name.substring(1)];
   		}
   		else if (target.indexOf("channel") >= 0) {
-  			
+  			var name = $(e.relatedTarget).find(".mb-1").text();
+  			messagesListView.cryptoname = name.substring(1);
+  			messagesListView.title = name+" Channel";
+  			messagesListView.type = "Post";
+  			messagesListView.cmd = "WAL";
+  			for (var item of messageWall.following) {
+  				if (item.key == messagesListView.cryptoname)
+  					messagesListView.messages = item.value;
+  			}
   		}
 	});
 
@@ -236,18 +252,22 @@ $(function () {
 			save() {
 				var subscription = this.subscriptionName.trim().toLowerCase();
 
-				messageWall.following.push({subscription:[]});
+				messageWall.following[subscription] = [];
 
+				var temps = [];
 				var myFollowing = getProfile(currentDID+"_following");
-				var temps = JSON.parse(myFollowing);
+				if (myFollowing) {
+					temps = JSON.parse(myFollowing);
+				}
 				temps.push(subscription);
-				setProfile(currentDID+"_following", JSON.stringly(temps));
+				setProfile(currentDID+"_following", JSON.stringify(temps));
 
 				elaMsg._getKeyOfName(subscription, "ela.address").then(function(address) {
 					return elaMsg.getMyMessages(address, "WAL", subscription, 0, 100);
 				}).then(function(result) {
 					messageWall.following[subscription] = result;
 				});
+				$("#newSubscriptionDialog").modal("hide");
 			}
 		},
 		created () {
@@ -261,6 +281,7 @@ $(function () {
 	window.sendMessageDialog = new Vue({
 		el:"#sendMessageDialog",
 		data: {
+			"cmd":"",
 			"quote":"",
 			"recipient":"",
 			"messageBody": "",
@@ -312,7 +333,7 @@ $(function () {
 
 				var pthis = this;
 
-				elaMsg.sendMessage(currentName, receiver, "","MSG", message, amount).then (function(url) {
+				elaMsg.sendMessage(currentName, receiver, "", this.cmd, message, amount).then (function(url) {
 					console.log(url);
 					$('#sendMessageDialog').modal("hide");
 					window.location.href = url;
@@ -326,23 +347,27 @@ $(function () {
 	$('#sendMessageDialog').on('show.bs.modal', function (e) {
 		var button = $(e.relatedTarget);
   		var target = button.data('whatever');
+  		var cryptoname = button.data('cryptoname');
+  		var cmd = button.data('cmd');
 
   		$("#message-text").val("");
 
   		if (target.indexOf("replyTo") == 0) {
   			sendMessageDialog.quote = $(e.relatedTarget).find("p.mb-1").text();
-  			var tmp = $(e.relatedTarget).find("h5.mb-1").text();
-  			sendMessageDialog.recipient = tmp.substring(tmp.indexOf("@")+1);  			
+  			sendMessageDialog.cmd = cmd;
+  			sendMessageDialog.recipient = cryptoname;  			
   		}
   		else if (target.indexOf("newMessage") >= 0) {
-  			sendMessageDialog.recipient = "";
   			sendMessageDialog.quote = "";
+  			sendMessageDialog.cmd = cmd;
+  			sendMessageDialog.recipient = "";
 
   		}
   		else if (target.indexOf("postMessage") >= 0) {
-  				
+  			sendMessageDialog.quote = "";
+  			sendMessageDialog.cmd = cmd;
+  			sendMessageDialog.recipient = cryptoname;
   		}
-
 	});
 
     // window.app = new Vue({
