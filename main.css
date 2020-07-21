@@ -51,8 +51,12 @@ body {
   font-size: 0.8rem;
 }
 
-.mb-1 {
+.cryptoname-title {
   overflow:hidden;
   white-space:nowrap;
   text-overflow:ellipsis;
+}
+
+.message-header {
+  background-color: #f5f5f5;
 }

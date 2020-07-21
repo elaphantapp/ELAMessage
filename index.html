@@ -51,12 +51,12 @@
             <div class="row">
               <div class="col-10">
                 <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1">#{{ item.key }}</h5>
+                  <h5 class="mb-1 cryptoname-title">#{{ item.key }}</h5>
                 </div>
                 <!--small>badge badge-primary badge-pill.</small-->
               </div>
               <div class="col-2 text-right">
-                  <span class="badge badge-secondary badge-pill">{{ item.value?item.value.length:0 }}</span>
+                  <span class="badge badge-secondary badge-pill">{{ localStorage.getItem(currentDID+"_"+currentName+"_#"+item.key+"_unreadmessage") }}</span>
               </div>
             </div>
           </a>
@@ -72,18 +72,18 @@
       </div>
 
       <div id="personalMessage" class="my-3 p-3 bg-white rounded shadow-sm">
-        <h4 class="border-bottom border-gray pb-2 mb-0"><b>Messages({{ Object.keys(messages).length }})</b></h4>
+        <h4 class="border-bottom border-gray pb-2 mb-0"><b>Messages({{ messages.length }})</b></h4>
         <div class="list-group list-group-flush">
-          <a href="#" data-toggle="modal" data-target="#messagesListView" data-whatever="messages" v-for="(value, key, index) in messages" v-if="index<5" class="list-group-item list-group-item-action">
+          <a href="#" data-toggle="modal" data-target="#messagesListView" data-whatever="messages" v-for="(item, index) in messages" v-if="index<5" class="list-group-item list-group-item-action">
             <div class="row">
               <div class="col-10">
                 <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1">@{{ key }}</h5>
+                  <h5 class="mb-1 cryptoname-title">@{{ item.key }}</h5>
                 </div>
                 <!--small>badge badge-primary badge-pill.</small-->
               </div>
               <div class="col-2 text-right">
-                  <span class="badge badge-secondary badge-pill">{{ value.length }}</span>
+                  <span class="badge badge-secondary badge-pill">{{ item.unread }}</span>
               </div>
             </div>
           </a>
@@ -110,16 +110,16 @@
             </div>
             <div class="modal-body">
               <div class="list-group list-group-flush">
-                <a href="#" data-toggle="modal" data-target="#messagesListView" data-whatever="messages" v-for="(value, key, index) in messages" class="list-group-item list-group-item-action">
+                <a href="#" data-toggle="modal" data-target="#messagesListView" v-for="(item, index) in messages" class="list-group-item list-group-item-action" v-bind:['data-whatever']="type">
                   <div class="row">
                     <div class="col-10">
                       <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">@{{ key }}</h5>
+                        <h5 class="mb-1 cryptoname-title">{{ type=='messages'?'@'+item.key : '#'+item.key }}</h5>
                       </div>
                       <!--small>badge badge-primary badge-pill.</small-->
                     </div>
                     <div class="col-2 text-right">
-                        <span class="badge badge-secondary badge-pill">{{ value.length }}</span>
+                        <span class="badge badge-secondary badge-pill">{{ type=='messages' ? localStorage.getItem(currentDID+"_"+currentName+"_@"+item.key+"_unreadmessage") : localStorage.getItem(currentDID+"_"+currentName+"_#"+item.key+"_unreadmessage") }}</span>
                     </div>
                   </div>
                 </a>
@@ -151,17 +151,18 @@
                   </svg>
                 </span>
               </div>
-              <input type="text" class="form-control" placeholder="CryptoName" aria-label="Username" aria-describedby="addon-wrapping">
+              <input type="text" class="form-control" placeholder="keyword" aria-label="keyword" aria-describedby="addon-wrapping" v-model="keyword">
             </div>
             <div class="modal-body">
               <div class="list-group list-group-flush">
-                 <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" class="list-group-item list-group-item-action" v-for="msg in messages" v-bind:['data-cmd']="cmd" v-bind:['data-cryptoname']="currentName==msg.t? msg.f : msg.t">
-                  <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1" v-if="cmd == 'WAL'">
+                 <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" class="list-group-item list-group-item-action flex-column" v-for="msg in messages" v-bind:['data-cmd']="cmd" v-bind:['data-cryptoname']="currentName==msg.t? msg.f : msg.t" v-if="keyword=='' || msg.m.indexOf(keyword)>=0 || msg.t.indexOf(keyword)>=0 || msg.f.indexOf(keyword)>=0">
+                  <div class="d-flex w-100 justify-content-between align-items-centerx message-header">
+                    <small v-if="cmd=='MSG' && currentName==msg.f">{{ moment(msg.timestamp*1000).format("DD-MM-YYYY HH:mm") }}</small>
+                    <h5 class="mb-1 cryptoname-title" v-if="cmd == 'WAL'">
                       {{ msg.f }}
                     </h5>
-                    <h5 class="mb-1" v-if="cmd == 'MSG'">
-                      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg" v-if="currentName==msg.t">
+                    <h5 class="mb-1 cryptoname-title" v-if="cmd == 'MSG'">
+                      <!--svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg" v-if="currentName==msg.t">
                         <path fill-rule="evenodd" d="M4.646 8.146a.5.5 0 0 1 .708 0L8 10.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
                         <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0v-9A.5.5 0 0 1 8 1z"/>
                         <path fill-rule="evenodd" d="M1.5 13.5A1.5 1.5 0 0 0 3 15h10a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 13 4h-1.5a.5.5 0 0 0 0 1H13a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5v-8A.5.5 0 0 1 3 5h1.5a.5.5 0 0 0 0-1H3a1.5 1.5 0 0 0-1.5 1.5v8z"/>
@@ -170,15 +171,14 @@
                         <path fill-rule="evenodd" d="M4.646 4.354a.5.5 0 0 0 .708 0L8 1.707l2.646 2.647a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 0 0 0 .708z"/>
                         <path fill-rule="evenodd" d="M8 11.5a.5.5 0 0 0 .5-.5V2a.5.5 0 0 0-1 0v9a.5.5 0 0 0 .5.5z"/>
                         <path fill-rule="evenodd" d="M2.5 14A1.5 1.5 0 0 0 4 15.5h8a1.5 1.5 0 0 0 1.5-1.5V7A1.5 1.5 0 0 0 12 5.5h-1.5a.5.5 0 0 0 0 1H12a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5H4a.5.5 0 0 1-.5-.5V7a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 0 0-1H4A1.5 1.5 0 0 0 2.5 7v7z"/>
-                      </svg>
-                      {{ currentName==msg.t? msg.f : msg.t }}
+                      </svg-->
+                      {{ currentName==msg.f? "me" : msg.f }}
                     </h5>
-                    <small>{{ moment(msg.timestamp*1000).format("DD-MM-YYYY h:mm") }}</small>
+                    <small v-if="cmd=='MSG' && currentName==msg.t">{{ moment(msg.timestamp*1000).format("DD-MM-YYYY HH:mm") }}</small>
                   </div>
-                  <p class="mb-1">{{ msg.m }}</p>
+                  <p class="mb-1">{{ escapeHTML(msg.m) }}</p>
                   <small>Candy is {{ msg.amount/100000000 }} ELA.</small>
-                  <small v-if="cmd == 'WAL'">{{ "["+msg.input.slice(0, 4)+"..."+msg.input.slice(-8)+"]" }}</small>
-                  <small v-if="cmd == 'MSG'">{{ currentName==msg.t? "["+msg.input.slice(0, 4)+"..."+msg.input.slice(-8)+"]" : "["+msg.output.slice(0, 4)+"..."+msg.output.slice(-8)+"]" }}</small>
+                  <small>{{ "["+msg.input.slice(0, 4)+"..."+msg.input.slice(-8)+"]" }}</small>
                 </a>
               </div>
             </div>

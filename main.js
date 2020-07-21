@@ -112,6 +112,12 @@ $(function () {
 	window.currentAddress = currentAddress;
 	window.returnURL = window.location.href.split('?')[0];
 
+
+	window.escapeHTML = function(a){  
+	    a = "" + a;  
+	    return a.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, '"').replace(/'/g, "'");
+	};
+
 	window.groupBy = function(xs, myname) {
 		var ret = {};
 		for (var x of xs) {
@@ -152,7 +158,7 @@ $(function () {
 						var result = await elaMsg.getMyMessages(address, "WAL", target, 0, 100);
 						if (result && result.length > 0) {
 							//delete pthis.folloing[target];
-							pthis.following.push({"key":target, "value":result});
+							pthis.following.push({"key":target, "value":result, "unread": localStorage.getItem(currentDID+"_"+currentName+"_#"+target+"_unreadmessage")});
 						}
 					} catch (err) {
 						console.log(err);
@@ -165,14 +171,22 @@ $(function () {
 	window.personalMessage = new Vue({
 		el:"#personalMessage",
 		data: {
-			"messages": {}
+			"messages": []
 		},
 		methods: {
 		},
 		created () {
 			var pthis = this;
 			elaMsg.getMyMessages(currentAddress, "MSG", currentName, 0, 100).then(function(data) {
-				pthis.messages = groupBy(data, currentName);
+
+				var tmpMessages = groupBy(data, currentName);
+	  			for (var item in tmpMessages) {
+	  				pthis.messages.push({
+	  					"key": item,
+	  					"value": tmpMessages[item],
+	  					"unread": localStorage.getItem(currentDID+"_"+currentName+"_@"+item+"_unreadmessage")
+	  				});
+	  			}
 			})
 		}
 	});
@@ -180,7 +194,8 @@ $(function () {
 	window.cryptoNameListView = new Vue({
 		el:"#cryptoNameListView",
 		data: {
-			messages:[]
+			"messages":[],
+			"type":""
 		},
 		methods: {
 
@@ -193,12 +208,13 @@ $(function () {
   		var target = button.data('whatever');
 
   		if (target.indexOf("messages") == 0) {
-
+  			cryptoNameListView.messages = [];
+  			cryptoNameListView.type = "messages";
   			cryptoNameListView.messages = personalMessage.messages;
   		}
-  		else if (target.indexOf("channel") >= 0) {
-  			
+  		else if (target.indexOf("channel") == 0) {
   			cryptoNameListView.messages = messageWall.following;
+  			cryptoNameListView.type = "channel";
   		}
 
 	});
@@ -229,18 +245,36 @@ $(function () {
   			messagesListView.title = name+" Messages";
   			messagesListView.type = "Reply";
   			messagesListView.cmd = "MSG";
-  			messagesListView.messages = personalMessage.messages[name.substring(1)];
+  			for (var index in personalMessage.messages) {
+  				var item = personalMessage.messages[index];
+  				if (item.key == messagesListView.cryptoname) {
+  					messagesListView.messages = item.value;
+  					item.unread = 0;
+  					personalMessage.messages.splice(index, 1, item);
+  					break;
+  				}
+  			}
+
+  			localStorage.setItem(currentDID+"_"+currentName+"_@"+messagesListView.cryptoname+"_lastreadmessage", messagesListView.messages[0].timestamp);
+  			localStorage.setItem(currentDID+"_"+currentName+"_@"+messagesListView.cryptoname+"_unreadmessage", 0);
   		}
-  		else if (target.indexOf("channel") >= 0) {
+  		else if (target.indexOf("channel") == 0) {
   			var name = $(e.relatedTarget).find(".mb-1").text();
   			messagesListView.cryptoname = name.substring(1);
   			messagesListView.title = name+" Channel";
   			messagesListView.type = "Post";
   			messagesListView.cmd = "WAL";
-  			for (var item of messageWall.following) {
-  				if (item.key == messagesListView.cryptoname)
+  			for (var index in messageWall.following) {
+  				var item = messageWall.following[index];
+  				if (item.key == messagesListView.cryptoname) {
   					messagesListView.messages = item.value;
+  					item.unread = 0;
+  					messageWall.following.splice(index, 1, item);
+  					break;
+  				}
   			}
+  			localStorage.setItem(currentDID+"_"+currentName+"_#"+messagesListView.cryptoname+"_lastreadmessage", messagesListView.messages[0].timestamp);
+  			localStorage.setItem(currentDID+"_"+currentName+"_#"+messagesListView.cryptoname+"_unreadmessage", 0);
   		}
 	});
 

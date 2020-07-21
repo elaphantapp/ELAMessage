@@ -28,6 +28,13 @@ class ElaMessage {
 		var pthis = this;
 		return this.getRawMessages(elaAddress, cmd, page, size).then(function(ret) {
 			var result = [];
+
+			var lastLoadDataKey = elaAddress+"_"+cmd+"_lasttimestamp";
+			var lastLoadDatatimestamp = parseInt(localStorage.getItem(lastLoadDataKey));
+
+			if (!lastLoadDatatimestamp) lastLoadDatatimestamp = 0;
+			var lastItemTimeStamp = lastLoadDatatimestamp;
+
 			for (var item of ret) {
 				(function() {
 					var fromAddress = item.input;
@@ -42,8 +49,38 @@ class ElaMessage {
 					item.f = item.f.toLowerCase();
 					item.t = item.t.toLowerCase();
 					item.m = decodeURIComponent(item.m);
+
+					if (lastLoadDatatimestamp < item.timestamp) {
+						var itemkey = currentDID+"_"+currentName;
+						var itemcountkey = currentDID+"_"+currentName;
+						if (cmd == "MSG") {
+							var targetname = name==item.t?item.f:item.t;
+							itemkey += "_@"+targetname+"_lastreadmessage";
+							itemcountkey += "_@"+targetname+"_unreadmessage";
+						}
+						else if (cmd == "WAL") {
+							itemkey += "_#"+name+"_lastreadmessage";
+							itemcountkey += "_#"+name+"_unreadmessage";
+						}
+						var lasttimestamp = localStorage.getItem(itemkey);
+						if (!lasttimestamp) lasttimestamp = 0;
+
+						var count = localStorage.getItem(itemcountkey);
+						if (!count) {
+							count = 0;
+							localStorage.setItem(itemcountkey, 0);
+						}
+						if (lasttimestamp < item.timestamp) {
+							localStorage.setItem(itemcountkey, parseInt(count) + 1);
+						}
+						if (lastItemTimeStamp < item.timestamp) {
+							lastItemTimeStamp = parseInt(item.timestamp);
+							localStorage.setItem(lastLoadDataKey, lastItemTimeStamp);
+						}
+					}
 				}
 			}
+			
 			return ret;
 		});
 	}
