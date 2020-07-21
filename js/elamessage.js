@@ -99,30 +99,6 @@ class ElaMessage {
 
 			return pthis.generatSendRequirment(addr, cmd, msg, amount);
 		});
-
-
-
-		// var pthis = this;
-		// var nameInfo;
-		// return this._getNameInfo(receiver).then(function(obj) {
-		// 	nameInfo = obj;
-		// 	return pthis._getOwner(receiver).then(function(owner) {
-
-		// 		if (pthis._verifyMessagerName(nameInfo, owner)) {
-		// 			var msg = {
-		// 				"f":sender.toLowerCase(),
-		// 				"t":receiver.toLowerCase(),
-		// 				"r":replyto,
-		// 				"m":encodeURIComponent(message)
-		// 			};
-		// 			var address = nameInfo["ela.address"];
-
-		// 			return pthis.generatSendRequirment(address, cmd, msg, amount);
-		// 		}
-
-		// 	})
-		// });
-
 	}
 
 	getRawMessages(elaAddress, cmd, page, size) {
@@ -145,7 +121,7 @@ class ElaMessage {
 									obj["output"] = item.Outputs[0];
 									obj["height"] = item.Height;
 									obj["amount"] = (item.Type=="income") ? item.Value : (item.Value - item.Fee);
-									obj["timestamp"] = item.CreateTime;
+									obj["timestamp"] = item.CreateTime==0?parseInt(Date.now()/1000):item.CreateTime;
 									obj["verify"] = false;
 									result.push(obj);
 								})();
