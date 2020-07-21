@@ -107,7 +107,7 @@ class ElaMessage {
 									obj["input"] = item.Inputs[0];
 									obj["output"] = item.Outputs[0];
 									obj["height"] = item.Height;
-									obj["amount"] = (item.Type=="income") ? item.Value : (item.Value - item.NodeFee);
+									obj["amount"] = (item.Type=="income") ? item.Value : (item.Value - item.Fee);
 									obj["timestamp"] = item.CreateTime;
 									obj["verify"] = false;
 									result.push(obj);
