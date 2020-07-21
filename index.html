@@ -90,7 +90,7 @@
         </div>
         <div class="row">
           <small class="d-block text-left mt-3 col">
-            <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="newMessage">+New</a>
+            <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="newMessage" data-cmd="MSG">+New</a>
           </small>
           <small class="d-block text-right mt-3 col">
             <a href="#" data-toggle="modal" data-target="#cryptoNameListView" data-whatever="messages">+View All</a>
@@ -157,7 +157,10 @@
               <div class="list-group list-group-flush">
                  <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" class="list-group-item list-group-item-action" v-for="msg in messages" v-bind:['data-cmd']="cmd" v-bind:['data-cryptoname']="currentName==msg.t? msg.f : msg.t">
                   <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">
+                    <h5 class="mb-1" v-if="cmd == 'WAL'">
+                      {{ msg.f }}
+                    </h5>
+                    <h5 class="mb-1" v-if="cmd == 'MSG'">
                       <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-in-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg" v-if="currentName==msg.t">
                         <path fill-rule="evenodd" d="M4.646 8.146a.5.5 0 0 1 .708 0L8 10.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
                         <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0v-9A.5.5 0 0 1 8 1z"/>
@@ -174,7 +177,8 @@
                   </div>
                   <p class="mb-1">{{ msg.m }}</p>
                   <small>Candy is {{ msg.amount/100000000 }} ELA.</small>
-                  <small>{{ currentName==msg.t? "["+msg.input.slice(0, 4)+"..."+msg.input.slice(-8)+"]" : "["+msg.output.slice(0, 4)+"..."+msg.output.slice(-8)+"]" }}</small>
+                  <small v-if="cmd == 'WAL'">{{ "["+msg.input.slice(0, 4)+"..."+msg.input.slice(-8)+"]" }}</small>
+                  <small v-if="cmd == 'MSG'">{{ currentName==msg.t? "["+msg.input.slice(0, 4)+"..."+msg.input.slice(-8)+"]" : "["+msg.output.slice(0, 4)+"..."+msg.output.slice(-8)+"]" }}</small>
                 </a>
               </div>
             </div>

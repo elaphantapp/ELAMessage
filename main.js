@@ -210,7 +210,8 @@ $(function () {
 			"title":"",
 			"type":"",
 			"cmd":"",
-			"messages":[]
+			"messages":[],
+			"keyword":""
 		},
 		methods: {
 		},
