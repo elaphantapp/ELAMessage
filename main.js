@@ -300,7 +300,11 @@ $(function () {
 				elaMsg._getKeyOfName(subscription, "ela.address").then(function(address) {
 					return elaMsg.getMyMessages(address, "WAL", subscription, 0, 100);
 				}).then(function(result) {
-					messageWall.following[subscription] = result;
+					messageWall.following.push({
+						"key":subscription,
+						"value":result,
+						"unread":result.length
+					});
 				});
 				$("#newSubscriptionDialog").modal("hide");
 			}
