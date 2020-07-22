@@ -56,6 +56,10 @@ $(function () {
 			currentDID = identity.DID;
 			currentAddress = identity.ELAAddress;
 		}
+		else {
+			alert("Failed to log in to Elephant Wallet, please try again");
+			return;
+		}
 
 		setProfile("currentDID", currentDID);
 		setProfile(currentDID+"_currentAddress", currentAddress);
@@ -74,6 +78,12 @@ $(function () {
 					var owner = await elaMsg._getOwner(myName);
 					var nameInfo = await elaMsg._getNameInfo(myName);
 
+					if (nameInfo["ela.address"] != currentAddress || nameInfo["did"] != currentDID) {
+						alert("Please set the name corresponding to the elephant wallet.");
+						$("#settingNameDialog").modal("hide");
+						return;
+					}
+
 					if (elaMsg._verifyMessagerName(nameInfo, owner)) {
 						alert("Set name successfully!");
 						currentName = myName;
@@ -82,7 +92,7 @@ $(function () {
 						window.location.href = window.location.href.split('?')[0];
 					}
 					else {
-						alert("Failed to set name!");
+						alert("The \"Messenger\" is not enabled for the name you set, please go to the CryptoName website to set it up");
 						$("#settingNameDialog").modal("hide");
 					}
 				}
