@@ -162,13 +162,15 @@ $(function () {
 				(async function() {
 					try {
 						var target = key;
-						var address = await elaMsg._getKeyOfName(target, "ela.address");
+						var address = await elaMsg._getKeyOfName(target, "ela.address", true);
 						if (address.length < 34 )
 							return;
 						var result = await elaMsg.getMyMessages(address, "WAL", target, 0, 100);
 						if (result && result.length > 0) {
-							//delete pthis.folloing[target];
 							pthis.following.push({"key":target, "value":result, "unread": localStorage.getItem(currentDID+"_"+currentName+"_#"+target+"_unreadmessage")});
+						}
+						else {
+							pthis.following.push({"key":target, "value":[], "unread": 0});
 						}
 					} catch (err) {
 						console.log(err);
@@ -265,7 +267,7 @@ $(function () {
   				}
   			}
 
-  			localStorage.setItem(currentDID+"_"+currentName+"_@"+messagesListView.cryptoname+"_lastreadmessage", messagesListView.messages[0].timestamp);
+  			localStorage.setItem(currentDID+"_"+currentName+"_@"+messagesListView.cryptoname+"_lastreadmessage", messagesListView.messages[0] ? messagesListView.messages[0].timestamp : 0);
   			localStorage.setItem(currentDID+"_"+currentName+"_@"+messagesListView.cryptoname+"_unreadmessage", 0);
   		}
   		else if (target.indexOf("channel") == 0) {
@@ -283,7 +285,7 @@ $(function () {
   					break;
   				}
   			}
-  			localStorage.setItem(currentDID+"_"+currentName+"_#"+messagesListView.cryptoname+"_lastreadmessage", messagesListView.messages[0].timestamp);
+  			localStorage.setItem(currentDID+"_"+currentName+"_#"+messagesListView.cryptoname+"_lastreadmessage", messagesListView.messages[0] ? messagesListView.messages[0].timestamp : 0);
   			localStorage.setItem(currentDID+"_"+currentName+"_#"+messagesListView.cryptoname+"_unreadmessage", 0);
   		}
 	});
