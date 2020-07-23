@@ -90,22 +90,6 @@ class ElaMessage {
 		});
 	}
 
-	async sendMessage(sender, receiver, replyto, cmd, message, amount) {
-		if (cmd !="MSG" && cmd != "WAL") return "";
-
-		var pthis = this;
-		return this._getKeyOfName(receiver, "ela.address").then(function(addr) {
-			var msg = {
-				"f":sender.toLowerCase(),
-				"t":receiver.toLowerCase(),
-				"r":replyto,
-				"m":encodeURIComponent(message)
-			};
-
-			return pthis.generatSendRequirment(addr, cmd, msg, amount);
-		});
-	}
-
 	getRawMessages(elaAddress, cmd, page, size) {
 		return fetch('https://node1.elaphant.app/api/v3/history/' + elaAddress + '?' + "pageSize="+size+"&pageNum="+(page+1)+"&order=desc").then(function(response) {
 			    return response.json();
@@ -143,14 +127,55 @@ class ElaMessage {
 			});
 	}
 
-	generatSendRequirment(address, cmd, jsonData, amount) {
-		var base64 = btoa(JSON.stringify(jsonData));
-		var url = "https://launch.elaphant.app/?appName=CryptoName&appTitle=CryptoName&autoRedirect=True&redirectURL="+
-					"elaphant%3A%2F%2Felapay%3FDID%3DibxNTG1hBPK1rZuoc8fMy4eFQ96UYDAQ4J%26"+
-					"AppID%3Dac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290%26"+
-					"AppName%3DMini%2520Apps%26Description%3DMini%2520Apps%26PublicKey%3D034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55%26"+
-					"OrderID%3D"+cmd+"%3A"+base64+"%26CoinName%3DELA%26"+
-					"ReceivingAddress%3D"+address+"%26ReturnUrl%3Dhttps%3A%2F%2Felamessage.elaphant.app%26Amount%3D"+amount;
+	async sendMessage(sender, receiver, replyto, cmd, message, amount, returnUrl) {
+		if (cmd !="MSG" && cmd != "WAL") return "";
+
+		var pthis = this;
+		return this._getKeyOfName(receiver, "ela.address").then(function(addr) {
+			var msg = {
+				"f":sender.toLowerCase(),
+				"t":receiver.toLowerCase(),
+				"r":replyto,
+				"m":encodeURIComponent(message)
+			};
+
+			return pthis.generatSendRequirment(addr, cmd, msg, amount, returnUrl);
+		});
+	}
+
+	generatSendRequirment(_address, _cmd, _jsonData, _amount, _returnUrl) {
+		//var base64 = btoa(JSON.stringify(jsonData));
+
+		var appTitle = "CryptoName";
+		var developerDID = "ibxNTG1hBPK1rZuoc8fMy4eFQ96UYDAQ4J";
+		var appID = "ac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290";
+		var appName = "Mini Apps";
+		var publicKey = "034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55";
+		var returnUrl = _returnUrl || "https://elamessage.elaphant.app";
+		var orderID = _cmd+":"+btoa(JSON.stringify(_jsonData));
+
+		var elaphantURL = "elaphant://elapay?DID=" + developerDID +
+						 "&AppID=" + appID +
+						 "&AppName=" + encodeURIComponent(appName) +
+						 "&Description=" + encodeURIComponent(appName) +
+						 "&PublicKey="+ publicKey +
+						 "&OrderID=" + orderID +
+						 "&CoinName=ELA"+
+						 "&ReceivingAddress=" + _address +
+						 "&Amount=" + _amount +
+						 "&ReturnUrl=" + encodeURIComponent(returnUrl);
+
+		var url = "https://launch.elaphant.app/?appName="+encodeURIComponent(appTitle)+
+				  	"&appTitle="+encodeURIComponent(appTitle)+
+				  	"&autoRedirect=True&redirectURL="+encodeURIComponent(elaphantURL);
+					
+
+		// var url = "https://launch.elaphant.app/?appName=CryptoName&appTitle=CryptoName&autoRedirect=True&redirectURL="+
+		// 			"elaphant%3A%2F%2Felapay%3FDID%3DibxNTG1hBPK1rZuoc8fMy4eFQ96UYDAQ4J%26"+
+		// 			"AppID%3Dac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290%26"+
+		// 			"AppName%3DMini%2520Apps%26Description%3DMini%2520Apps%26PublicKey%3D034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55%26"+
+		// 			"OrderID%3D"+cmd+"%3A"+base64+"%26CoinName%3DELA%26"+
+		// 			"ReceivingAddress%3D"+address+"%26ReturnUrl%3Dhttps%3A%2F%2Felamessage.elaphant.app%26Amount%3D"+amount;
 		return url;
 	}
 
@@ -187,6 +212,9 @@ class ElaMessage {
 			localStorage.setItem(name+"_getKeyOfName_"+key, JSON.stringify({"timestamp": Date.now(), "value":val}));
 
 			return val == value;
+		}, function(err) {console.log(err); return false;}).catch(err => {
+			console.log(err);
+			return false;
 		});
 	}
 

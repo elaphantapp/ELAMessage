@@ -11,8 +11,17 @@ $(function () {
 	window.elaMsg = new ElaMessage(crypton);
 
 	
-	let params = new URLSearchParams(document.location.search.substring(1));
-	var receiver = params.get("r");
+	const url = new URL(window.location.href);
+	url.searchParams.delete('OrderID');
+	url.searchParams.delete('TXID');
+	var entryURL = url.href;
+
+	let params = new URLSearchParams(url.search.substring(1));
+	var currentDID = "www";
+	var currentName = "www";
+	var currentAddress = "www";
+
+	var receiver = params.get("n");
 	if (!receiver)
 		receiver = "";
 	var message = params.get("m");
@@ -26,7 +35,7 @@ $(function () {
 			"recipient": receiver,
 			"messageBody": message,
 			"recipientChecked": 0,
-			"amount":0.000001
+			"amount":0.01
 		},
 		methods: {
 			async checkRecipient() {
@@ -74,15 +83,17 @@ $(function () {
 
 				var pthis = this;
 
-				elaMsg.sendMessage("www", receiver, "", "MSG", message, amount).then (function(url) {
+				elaMsg.sendMessage("www", receiver, "", "MSG", message, amount, window.location.href).then (function(url) {
 					console.log(url);
-					$('#sendMessageDialog').modal("hide");
 					window.location.href = url;
 				})
 			}
 		},
 		created() {
 			this.quote = "You can send a public message to the CryptoName user who enabled Messenger option. This message will be stored on the blockchain, so please pay attention to your personal privacy. The receiver can't reply to you, if you already have a CryptoName, you can install the ELA Message which is an elephant wallet mini app and talk to him.";
+			if (this.recipient.length > 0) 
+				this.checkRecipient();
 		}
 	});
+
 });

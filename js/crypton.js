@@ -13,6 +13,10 @@ class Crypton {
 		return fetch("https://"+name+".elastos.name/"+key)
 			.then (result => {
 				return result.text();
+			})
+			.catch(function(err){
+				console.log(err);
+				return undefined;
 			});
 	}
 

@@ -40,11 +40,16 @@ $(function () {
 		window.location.href = url;		
 	}
 
-	let params = new URLSearchParams(document.location.search.substring(1));
+	const url = new URL(window.location.href);
+	url.searchParams.delete('OrderID');
+	url.searchParams.delete('TXID');
+	var entryURL = url.href;
+
+	let params = new URLSearchParams(url.search.substring(1));
 	var identityData = params.get("Data");
-	var currentDID = params.get("did");;
-	var currentName = params.get("name");//"songsjun";
-	var currentAddress = params.get("address");//"songsjun";
+	var currentDID = params.get("did");
+	var currentName = params.get("name");
+	var currentAddress = params.get("address");
 
 
 	if (identityData) {
@@ -385,7 +390,7 @@ $(function () {
 
 				var pthis = this;
 
-				elaMsg.sendMessage(currentName, receiver, "", this.cmd, message, amount).then (function(url) {
+				elaMsg.sendMessage(currentName, receiver, "", this.cmd, message, amount, entryURL).then (function(url) {
 					console.log(url);
 					$('#sendMessageDialog').modal("hide");
 					window.location.href = url;

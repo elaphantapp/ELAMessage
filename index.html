@@ -166,7 +166,12 @@
                     <small v-if="cmd=='MSG' && currentName==msg.t">{{ moment(msg.timestamp*1000).format("DD-MM-YYYY HH:mm") }}</small>
                   </div>
                   <p class="mb-1">{{ escapeHTML(msg.m) }}</p>
-                  <small>Candy is {{ msg.amount/100000000 }} ELA.</small>
+                  <img v-if="msg.amount/100000000 >= 0.01" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                  <img v-if="msg.amount/100000000 >= 0.1" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                  <img v-if="msg.amount/100000000 >= 1" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                  <img v-if="msg.amount/100000000 >= 10" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                  <img v-if="msg.amount/100000000 >= 100" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                  <small>Candy is {{ msg.amount/100000000 }} ELA</small>
                   <small>{{ "["+msg.input.slice(0, 4)+"..."+msg.input.slice(-8)+"]" }}</small>
                   <small class="text-success" v-if="msg.verify">Verified</small>
                 </a>
@@ -195,7 +200,7 @@
               <form>
                 <div class="form-group">
                   <label for="recipient-name" class="col-form-label">CryptoName:</label>
-                  <input type="text" placeholder="Types the CryptoName" class="form-control" id="subscription-name" v-model="subscriptionName">
+                  <input type="text" placeholder="Types the CryptoName" class="form-control" id="subscription-name" v-model="subscriptionName" autofocus>
                 </div>
               </form>
             </div>
@@ -220,7 +225,7 @@
               <form>
                 <div class="form-group">
                   <label for="recipient-name" class="col-form-label">CryptoName:</label>
-                  <input type="text" placeholder="Types the CryptoName" class="form-control" id="my-name" v-model="myName">
+                  <input type="text" placeholder="Types the CryptoName" class="form-control" id="my-name" v-model="myName" autofocus>
                 </div>
               </form>
             </div>
@@ -249,7 +254,7 @@
               <form>
                 <div class="form-group">
                   <label for="recipient-name" class="col-form-label">To: </label>
-                  <input type="text" placeholder="Types your CryptoName" class="form-control" id="receiver-name" @blur="checkRecipient" v-model="recipient">
+                  <input type="text" placeholder="Types your CryptoName" class="form-control" id="receiver-name" @blur="checkRecipient" v-model="recipient" autofocus>
                 </div>
                 <div class="form-group">
                   <label for="message-text" class="col-form-label">Message:</label>
@@ -272,11 +277,12 @@
           </div>
         </div>
       </div>
+
       <footer class="page-footer font-small blue">
         <!-- Copyright -->
         <div class="footer-copyright text-center py-3 text-muted">
           Powered by
-          <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" data-cmd="MSG" data-cryptoname="elaphant" >@Elaphant</a>
+          <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" data-cmd="WAL" data-cryptoname="elaphant" >@Elaphant</a>
         </div>
         <!-- Copyright -->
       </footer>

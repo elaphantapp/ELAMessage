@@ -37,7 +37,7 @@
       <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded shadow-sm">
         <img class="mr-3" src="logo.png" alt="" width="48" height="48">
         <div class="lh-100">
-          <h3 class="mb-0 text-white lh-100"><b>ELA Message</b></h3>
+          <h3 class="mb-0 text-white lh-100"><b>ELA Message Wall</b></h3>
           <small>Sweet talking with ELA candy ^_^</small>
         </div>
       </div>
@@ -58,16 +58,16 @@
                 </div>
                 <div class="form-group">
                   <label for="message-text" class="col-form-label">Message:</label>
-                  <textarea rows="4" class="form-control" placeholder="The maximum length is 140 characters. The message will be publicly stored on the blockchain forever in text. Anyone can read it." id="message-text" v-model="messageBody"></textarea>
+                  <textarea rows="4" class="form-control" placeholder="The maximum length is 140 characters. The message will be publicly stored on the blockchain forever in text. Anyone can read it." id="message-text" v-model="messageBody" autofocus></textarea>
                 </div>
                 <div class="form-group">
                   <label for="recipient-name" class="col-form-label">Candy(ELA):</label>
-                  <input type="text" class="form-control" id="send-amount" value="0.000001" v-model="amount">
+                  <input type="text" class="form-control" id="send-amount" value="0.01" v-model="amount">
                 </div>
               </form>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" @click="sendMessage" :disabled="recipientChecked != 1">Send</button>
+              <button type="button" class="btn btn-primary" @click="sendMessage" :disabled="recipientChecked != 1 || amount < 0.01 || messageBody.length == 0">Anonymous Send</button>
             </div>
           </div>
       </div>

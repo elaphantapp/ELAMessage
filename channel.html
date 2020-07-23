@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <link rel="icon" type="image/png" href="./favicon.png" />
+    <title>ELA Message - elastos&elaphant chat</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/offcanvas/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+    <link href="main.css" rel="stylesheet">
+
+  </head>
+  <body class="bg-light">
+    <main id="main" role="main" class="container">
+      <div class="d-flex align-items-center p-3 my-3 text-white-50 bg-purple rounded shadow-sm">
+        <img class="mr-3" src="logo.png" alt="" width="48" height="48">
+        <div class="lh-100">
+          <h3 id="messageWallTitle" class="mb-0 text-white lh-100"></h3>
+          <h5>ELA Message Wall</h5>
+          <small>Sweet talking with ELA candy ^_^</small>
+        </div>
+      </div>
+
+      <div class="fade show" id="messagesListView" aria-labelledby="exampleModalScrollableTitle" aria-modal="true">
+          <div class="input-group flex-nowrap">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="addon-wrapping">
+                  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+                  <path fill-rule="evenodd" d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+                </svg>
+              </span>
+            </div>
+            <input type="text" class="form-control" placeholder="keyword" aria-label="keyword" aria-describedby="addon-wrapping" v-model="keyword">
+          </div>
+          <div class="modal-body">
+            <div class="list-group list-group-flush">
+               <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" class="list-group-item list-group-item-action flex-column" v-for="msg in messages" v-bind:['data-cmd']="cmd" v-bind:['data-cryptoname']="cmd == 'WAL' ? msg.t : msg.f" v-if="keyword=='' || msg.m.indexOf(keyword)>=0 || msg.t.indexOf(keyword)>=0 || msg.f.indexOf(keyword)>=0">
+                <div class="d-flex w-100 justify-content-between align-items-centerx message-header">
+                  <h5 class="mb-1 cryptoname-title" v-if="cmd == 'WAL'">
+                    {{ msg.f+" ["+msg.input.slice(0, 4)+"..."+msg.input.slice(-4)+"]" }}
+                  </h5>
+                  <small>{{ moment(msg.timestamp*1000).format("DD-MM-YYYY HH:mm") }}</small>
+                </div>
+                <p class="mb-1">{{ escapeHTML(msg.m) }}</p>
+                <img v-if="msg.amount/100000000 >= 0.01" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                <img v-if="msg.amount/100000000 >= 0.1" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                <img v-if="msg.amount/100000000 >= 1" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                <img v-if="msg.amount/100000000 >= 10" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                <img v-if="msg.amount/100000000 >= 100" src="https://img.icons8.com/plasticine/48/000000/sweet-halloween-candy.png" style="height: 1rem"/>
+                <small>Candy is {{ msg.amount/100000000 }} ELA </small>
+                <small>{{ "["+msg.txid.slice(0, 4)+"..."+msg.txid.slice(-8)+"]" }}</small>
+                <small class="text-success" v-if="msg.verify">Verified</small>
+              </a>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="postMessage" data-cmd="WAL" v-bind:['data-cryptoname']="cryptoname">Anonymous Post</button>
+          </div>
+      </div>
+
+      <div class="modal fade" id="sendMessageDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Post Message</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h5 class="text-center">
+                >> Notification <<
+              </h5>
+              <p>
+                {{ quote }}
+              </p>
+              <form>
+                <div class="form-group" >
+                  <label for="recipient-name" class="col-form-label" @focus="recipientChecked=0">To: </label>
+                  <input type="text" placeholder="The receiver's CryptoName" class="form-control" id="receiver-name" @blur="checkRecipient" v-model="recipient" readonly="readonly">
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Message:</label>
+                  <textarea rows="4" class="form-control" placeholder="The maximum length is 140 characters. The message will be publicly stored on the blockchain forever in text. Anyone can read it." id="message-text" v-model="messageBody" autofocus></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="recipient-name" class="col-form-label">Candy(ELA):</label>
+                  <input type="text" class="form-control" id="send-amount" value="0.001" v-model="amount">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" @click="sendMessage" :disabled="recipientChecked != 1 || amount < 0.01 || messageBody.length == 0">Anonymous Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <footer class="page-footer font-small blue">
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3 text-muted">
+          Powered by
+          <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" data-cmd="MSG" data-cryptoname="elaphant" >@Elaphant</a>
+        </div>
+        <!-- Copyright -->
+      </footer>
+    </main>
+    <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+    <script src="js/jquery_3.5.1.slim.min.js"></script>
+    <script src="js/bootstrap.bundle.js"></script>
+    <script src="js/index.umd.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/vue.min.js"></script>
+    <script src="js/sha256.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script src="js/domain_abi.js"></script>
+    <script src="js/crypton.js"></script>
+    <script src="js/elastos-wallet-api.js"></script>
+    <script src="js/elamessage.js"></script>
+    <script src="channel.js"></script>
+  </body>
+</html>
