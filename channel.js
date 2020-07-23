@@ -86,7 +86,7 @@ $(function () {
 			elaMsg._getKeyOfName(cryptoname, "ela.address", true).then (function(address) {
 				if (address.length < 34 )
 					return;
-				return elaMsg.getMyMessages(address, "WAL", cryptoname, 0, 100);
+				return elaMsg.getMyMessages(address, "WAL", cryptoname, 0, 1000);
 			}).then (function(result) {
 				if (result && result.length > 0) {
 					pthis.messages = result;

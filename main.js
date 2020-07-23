@@ -170,7 +170,7 @@ $(function () {
 					elaMsg._getKeyOfName(target, "ela.address", true).then (function(address) {
 						if (address.length < 34 )
 							return;
-						return elaMsg.getMyMessages(address, "WAL", target, 0, 100);
+						return elaMsg.getMyMessages(address, "WAL", target, 0, 300);
 					}).then (function(result) {
 						if (result && result.length > 0) {
 							pthis.following.push({"key":target, "value":result, "unread": localStorage.getItem(currentDID+"_"+currentName+"_#"+target+"_unreadmessage")});

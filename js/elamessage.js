@@ -39,7 +39,7 @@ class ElaMessage {
 			var lastItemTimeStamp = lastLoadDatatimestamp;
 
 			for (var item of ret) {
-				if ( !name || name=="" || (item.t == name && cmd == "WAL") || ( cmd == "MSG" && (item.f == name || item.t == name)) ) {
+				if ( !name || name=="" || (cmd == "WAL" && item.t == name && (item.f != "www" || item.amount >= 1000000)) || ( cmd == "MSG" && (item.f == name || item.t == name)) ) {
 					(function() {
 						var fromAddress = item.input;
 						var obj = item;
