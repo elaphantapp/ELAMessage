@@ -160,21 +160,22 @@ $(function () {
 
 			for (var key in this.followingData) {
 				(async function() {
-					try {
-						var target = key;
-						var address = await elaMsg._getKeyOfName(target, "ela.address", true);
+					var target = key;
+
+					elaMsg._getKeyOfName(target, "ela.address", true).then (function(address) {
 						if (address.length < 34 )
 							return;
-						var result = await elaMsg.getMyMessages(address, "WAL", target, 0, 100);
+						return elaMsg.getMyMessages(address, "WAL", target, 0, 100);
+					}).then (function(result) {
 						if (result && result.length > 0) {
 							pthis.following.push({"key":target, "value":result, "unread": localStorage.getItem(currentDID+"_"+currentName+"_#"+target+"_unreadmessage")});
 						}
 						else {
 							pthis.following.push({"key":target, "value":[], "unread": 0});
 						}
-					} catch (err) {
+					}).catch (err => {
 						console.log(err);
-					}
+					})
 				})();
 			}
 		}
@@ -190,7 +191,7 @@ $(function () {
 		created () {
 			var pthis = this;
 			elaMsg.getMyMessages(currentAddress, "MSG", currentName, 0, 100).then(function(data) {
-
+				if (!data || data.length<=0) return;
 				var tmpMessages = groupBy(data, currentName);
 	  			for (var item in tmpMessages) {
 	  				pthis.messages.push({
@@ -248,8 +249,8 @@ $(function () {
 		}
 	});
 	$('#messagesListView').on('show.bs.modal', function (e) {
-		var button = $(e.relatedTarget);
-  		var target = button.data('whatever');
+		var button = e.relatedTarget;
+  		var target = button.dataset['whatever'];
 
   		if (target.indexOf("messages") == 0) {
   			var name = $(e.relatedTarget).find(".mb-1").text();
@@ -392,32 +393,35 @@ $(function () {
 			}
 		},
 		created () {
-
 		}
 	});
 	$('#sendMessageDialog').on('show.bs.modal', function (e) {
-		var button = $(e.relatedTarget);
-  		var target = button.data('whatever');
-  		var cryptoname = button.data('cryptoname');
-  		var cmd = button.data('cmd');
+		var button = e.relatedTarget;
+  		var target = button.dataset['whatever'];
+  		var cryptoname = button.dataset['cryptoname'];
+  		var cmd = button.dataset['cmd'];
 
   		$("#message-text").val("");
 
   		if (target.indexOf("replyTo") == 0) {
   			sendMessageDialog.quote = $(e.relatedTarget).find("p.mb-1").text();
   			sendMessageDialog.cmd = cmd;
-  			sendMessageDialog.recipient = cryptoname;  			
+  			sendMessageDialog.recipient = cryptoname;
+  			$("#receiver-name").val(cryptoname);
+			if (sendMessageDialog.recipient.length > 0) sendMessageDialog.checkRecipient();	
   		}
   		else if (target.indexOf("newMessage") >= 0) {
   			sendMessageDialog.quote = "";
   			sendMessageDialog.cmd = cmd;
   			sendMessageDialog.recipient = "";
-
+  			$("#receiver-name").val("");
   		}
   		else if (target.indexOf("postMessage") >= 0) {
   			sendMessageDialog.quote = "";
   			sendMessageDialog.cmd = cmd;
   			sendMessageDialog.recipient = cryptoname;
+  			$("#receiver-name").val(cryptoname);
+			if (sendMessageDialog.recipient.length > 0) sendMessageDialog.checkRecipient();	
   		}
 	});
 

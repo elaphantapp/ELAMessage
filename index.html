@@ -154,7 +154,7 @@
             </div>
             <div class="modal-body">
               <div class="list-group list-group-flush">
-                 <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" class="list-group-item list-group-item-action flex-column" v-for="msg in messages" v-bind:['data-cmd']="cmd" v-bind:['data-cryptoname']="currentName==msg.t? msg.f : msg.t" v-if="keyword=='' || msg.m.indexOf(keyword)>=0 || msg.t.indexOf(keyword)>=0 || msg.f.indexOf(keyword)>=0">
+                 <a href="#" data-toggle="modal" data-target="#sendMessageDialog" data-whatever="replyTo" class="list-group-item list-group-item-action flex-column" v-for="msg in messages" v-bind:['data-cmd']="cmd" v-bind:['data-cryptoname']="cmd == 'WAL' ? msg.t : msg.f" v-if="keyword=='' || msg.m.indexOf(keyword)>=0 || msg.t.indexOf(keyword)>=0 || msg.f.indexOf(keyword)>=0">
                   <div class="d-flex w-100 justify-content-between align-items-centerx message-header">
                     <small v-if="cmd=='MSG' && currentName==msg.f">{{ moment(msg.timestamp*1000).format("DD-MM-YYYY HH:mm") }}</small>
                     <h5 class="mb-1 cryptoname-title" v-if="cmd == 'WAL'">

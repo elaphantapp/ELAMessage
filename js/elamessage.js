@@ -27,6 +27,9 @@ class ElaMessage {
 
 		var pthis = this;
 		return this.getRawMessages(elaAddress, cmd, page, size).then(function(ret) {
+			if (!ret || ret.length <= 0) return;
+
+
 			var result = [];
 
 			var lastLoadDataKey = elaAddress+"_"+cmd+"_lasttimestamp";
@@ -36,19 +39,21 @@ class ElaMessage {
 			var lastItemTimeStamp = lastLoadDatatimestamp;
 
 			for (var item of ret) {
-				(function() {
-					var fromAddress = item.input;
-					var obj = item;
-					if (elaAddress != fromAddress) {
-						pthis._checkKeyOfName(obj.f, "ela.address", fromAddress).then (function(result) {
-							obj["verify"] = result;
-						})
-					}
-				})();
-				if (!name || name=="" || (item.t == name || item.f == name)) {
+				if ( !name || name=="" || (item.t == name && cmd == "WAL") || ( cmd == "MSG" && (item.f == name || item.t == name)) ) {
+					(function() {
+						var fromAddress = item.input;
+						var obj = item;
+						if (elaAddress != fromAddress) {
+							pthis._checkKeyOfName(obj.f, "ela.address", fromAddress).then (function(verified) {
+								obj["verify"] = verified;
+							})
+						}
+					})();
 					item.f = item.f.toLowerCase();
 					item.t = item.t.toLowerCase();
 					item.m = decodeURIComponent(item.m);
+
+					result.push(item);
 
 					if (lastLoadDatatimestamp < item.timestamp) {
 						var itemkey = currentDID+"_"+currentName;
@@ -76,12 +81,12 @@ class ElaMessage {
 						if (lastItemTimeStamp < item.timestamp) {
 							lastItemTimeStamp = parseInt(item.timestamp);
 							localStorage.setItem(lastLoadDataKey, lastItemTimeStamp);
-						}
+						}	
 					}
 				}
 			}
 			
-			return ret;
+			return result;
 		});
 	}
 
@@ -105,6 +110,9 @@ class ElaMessage {
 		return fetch('https://node1.elaphant.app/api/v3/history/' + elaAddress + '?' + "pageSize="+size+"&pageNum="+(page+1)+"&order=desc").then(function(response) {
 			    return response.json();
 			}).then(function(ret) {
+				if (!ret.result.History)
+					return undefined;
+
 				var result = [];
 				for (var item of ret.result.History) {
 					var memo = item.Memo;
@@ -113,18 +121,17 @@ class ElaMessage {
 						var msg = memo.substr(start+22);
 						try {
 							var ret = msg.split(":");
+
 							if (ret[0] == cmd) {
-								(function() {
-									var obj = JSON.parse(atob(ret[1]));
-									obj["txid"] = item.Txid;
-									obj["input"] = item.Inputs[0];
-									obj["output"] = item.Outputs[0];
-									obj["height"] = item.Height;
-									obj["amount"] = (item.Type=="income") ? item.Value : (item.Value - item.Fee);
-									obj["timestamp"] = item.CreateTime==0?parseInt(Date.now()/1000):item.CreateTime;
-									obj["verify"] = false;
-									result.push(obj);
-								})();
+								var obj = JSON.parse(atob(ret[1]));
+								obj["txid"] = item.Txid;
+								obj["input"] = item.Inputs[0];
+								obj["output"] = item.Outputs[0];
+								obj["height"] = item.Height;
+								obj["amount"] = (item.Type=="income") ? item.Value : (item.Value - item.Fee);
+								obj["timestamp"] = item.CreateTime==0?parseInt(Date.now()/1000):item.CreateTime;
+								obj["verify"] = false;
+								result.push(obj);
 							}
 						}
 						catch (err) {
