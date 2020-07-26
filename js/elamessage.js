@@ -49,9 +49,12 @@ class ElaMessage {
 							})
 						}
 					})();
+
 					item.f = item.f.toLowerCase();
 					item.t = item.t.toLowerCase();
 					item.m = decodeURIComponent(item.m);
+
+					if (item.f == "www") item.f+="[guest]"
 
 					result.push(item);
 

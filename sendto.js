@@ -90,7 +90,7 @@ $(function () {
 			}
 		},
 		created() {
-			this.quote = "Messages will be stored on the blockchain, so please pay attention to your personal privacy. You are currently anonymous, all senders names are "www", and recipients cannot reply to your messages. If you want to talk to another registered CryptoName user, you can by installing the ELA Message mini app inside the Elaphant Wallet.";
+			this.quote = "Messages will be stored on the blockchain, so please pay attention to your personal privacy. You are currently anonymous, all senders names are \"www\", and recipients cannot reply to your messages. If you want to talk to another registered CryptoName user, you can by installing the ELA Message mini app inside the Elaphant Wallet.";
 			if (this.recipient.length > 0) 
 				this.checkRecipient();
 		}
