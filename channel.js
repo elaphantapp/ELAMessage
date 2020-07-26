@@ -164,7 +164,7 @@ $(function () {
 			}
 		},
 		created() {
-			this.quote = "You can send a public message to the CryptoName user who enabled Messenger option. This message will be stored on the blockchain, so please pay attention to your personal privacy. The receiver can't reply to you, if you already have a CryptoName, you can install the ELA Message which is an elephant wallet mini app and talk to him.";
+			this.quote = "Message's will be stored on the blockchain, so please pay attention to your personal privacy. If you want to talk to another registered CryptoName user, you can by installing the ELA Message mini app inside the Elaphant Wallet.";
 		}
 	});	
 	$('#sendMessageDialog').on('show.bs.modal', function (e) {

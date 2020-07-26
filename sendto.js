@@ -90,7 +90,7 @@ $(function () {
 			}
 		},
 		created() {
-			this.quote = "You can send a public message to the CryptoName user who enabled Messenger option. This message will be stored on the blockchain, so please pay attention to your personal privacy. The receiver can't reply to you, if you already have a CryptoName, you can install the ELA Message which is an elephant wallet mini app and talk to him.";
+			this.quote = "Messages will be stored on the blockchain, so please pay attention to your personal privacy. You are currently anonymous, all senders names are "www", and recipients cannot reply to your messages. If you want to talk to another registered CryptoName user, you can by installing the ELA Message mini app inside the Elaphant Wallet.";
 			if (this.recipient.length > 0) 
 				this.checkRecipient();
 		}

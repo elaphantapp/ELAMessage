@@ -128,7 +128,7 @@ $(function () {
 	window.returnURL = window.location.href.split('?')[0];
 
 
-	window.escapeHTML = function(a){  
+	window.escapeHTML = function(a){
 	    a = "" + a;  
 	    return a.replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, '"').replace(/'/g, "'");
 	};
