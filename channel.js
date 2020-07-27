@@ -164,7 +164,7 @@ $(function () {
 			}
 		},
 		created() {
-			this.quote = "Message's will be stored on the blockchain, so please pay attention to your personal privacy. If you want to talk to another registered CryptoName user, you can by installing the ELA Message mini app inside the Elaphant Wallet.";
+
 		}
 	});	
 	$('#sendMessageDialog').on('show.bs.modal', function (e) {
