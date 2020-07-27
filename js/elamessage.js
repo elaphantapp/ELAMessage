@@ -157,7 +157,7 @@ class ElaMessage {
 		var appID = "ac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290";
 		var appName = "Mini Apps";
 		var publicKey = "034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55";
-		var returnUrl = _returnUrl || "https://elamessage.elaphant.app";
+		var returnUrl = _returnUrl || "https://elamessenger.elaphant.app";
 		var orderID = _cmd+":"+btoa(JSON.stringify(_jsonData));
 
 		var elaphantURL = "elaphant://elapay?DID=" + developerDID +
@@ -174,14 +174,6 @@ class ElaMessage {
 		var url = "https://launch.elaphant.app/?appName="+encodeURIComponent(appTitle)+
 				  	"&appTitle="+encodeURIComponent(appTitle)+
 				  	"&autoRedirect=True&redirectURL="+encodeURIComponent(elaphantURL);
-					
-
-		// var url = "https://launch.elaphant.app/?appName=CryptoName&appTitle=CryptoName&autoRedirect=True&redirectURL="+
-		// 			"elaphant%3A%2F%2Felapay%3FDID%3DibxNTG1hBPK1rZuoc8fMy4eFQ96UYDAQ4J%26"+
-		// 			"AppID%3Dac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290%26"+
-		// 			"AppName%3DMini%2520Apps%26Description%3DMini%2520Apps%26PublicKey%3D034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55%26"+
-		// 			"OrderID%3D"+cmd+"%3A"+base64+"%26CoinName%3DELA%26"+
-		// 			"ReceivingAddress%3D"+address+"%26ReturnUrl%3Dhttps%3A%2F%2Felamessage.elaphant.app%26Amount%3D"+amount;
 		return url;
 	}
 
