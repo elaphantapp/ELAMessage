@@ -3,7 +3,7 @@ $(function () {
 	PullToRefresh.init({
         mainElement: 'body',
         onRefresh: function() { 
-        	window.location.href = window.location.href;
+        	window.location.href = window.location.href.split('?')[0];
         }
     });
 
@@ -86,6 +86,7 @@ $(function () {
 					if (nameInfo["ela.address"] != currentAddress || nameInfo["did"] != currentDID) {
 						alert("Please set the name corresponding to the elephant wallet.");
 						$("#settingNameDialog").modal("hide");
+						loginElaphant();
 						return;
 					}
 
@@ -99,6 +100,7 @@ $(function () {
 					else {
 						alert("The \"Messenger\" is not enabled for the name you set, please go to the CryptoName website to set it up");
 						$("#settingNameDialog").modal("hide");
+						loginElaphant();
 					}
 				}
 			},
@@ -111,7 +113,7 @@ $(function () {
 		$("#settingNameDialog").modal("show");
 
 	}
-	else if (!currentName || !currentAddress) {
+	else if (!currentDID || !currentName || !currentAddress) {
 		currentDID = getProfile("currentDID");
 		if (!currentDID)
 			return loginElaphant();
@@ -142,7 +144,6 @@ $(function () {
 		return ret;
 	};
 
-
 	window.messageWall = new Vue({
 		el:"#messageWall",
 		data: {
@@ -168,7 +169,7 @@ $(function () {
 					var target = key;
 
 					elaMsg._getKeyOfName(target, "ela.address", true).then (function(address) {
-						if (address.length < 34 )
+						if (!address || address.length < 34 )
 							return;
 						return elaMsg.getMyMessages(address, "WAL", target, 0, 300);
 					}).then (function(result) {
@@ -429,15 +430,5 @@ $(function () {
 			if (sendMessageDialog.recipient.length > 0) sendMessageDialog.checkRecipient();	
   		}
 	});
-
-    // window.app = new Vue({
-    //     el: '#main',
-    //     data: {
-    //     },
-    //     methods: {
-    //     },
-    //     created() {
-    //     }
-    // })
 
 })
