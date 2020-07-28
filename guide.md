@@ -34,7 +34,9 @@
 
 ### 2. Install ELA Messenger mini app
 
-https://launch.elaphant.app/?appName=ELA%20Message&appTitle=ELA%20Message&autoRedirect=True&redirectURL=elaphant%3A%2F%2Felamessage.elaphant.app%2Felamessage.capsule
+Install it from "Mini Apps" or click below URL.
+
+https://launch.elaphant.app/?appName=ELA%20Messenger&appTitle=ELA%20Messenger&autoRedirect=True&redirectURL=elaphant%3A%2F%2Felamessenger.elaphant.app%2Felamessenger.capsule
 
 
 
