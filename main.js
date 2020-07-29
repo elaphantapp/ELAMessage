@@ -53,7 +53,6 @@ $(function () {
 
 
 	if (identityData) {
-		// To do
 		var identity = JSON.parse(identityData);
 		var sign = params.get("Sign");
 

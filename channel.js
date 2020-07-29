@@ -120,7 +120,7 @@ $(function () {
 					do {
 						var nameInfo = await elaMsg._getNameInfo(cryptoname, bForce);
 						var owner = await elaMsg._getOwner(cryptoname, bForce);
-						if (elaMsg._verifyMessagerName(nameInfo, owner)) {
+						if (elaMsg._verifyMessageWallName(nameInfo, owner)) {
 							this.recipientChecked = 1;
 							$("#receiver-name").css("color", "green").css("border-color", "green");
 							return;

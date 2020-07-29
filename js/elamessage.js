@@ -229,6 +229,8 @@ class ElaMessage {
 	}
 
 	_verifyMessageWallName(nameObject, owner) {
+		if (nameObject.name == "burn" && nameObject['ela.address'] == "ELANULLXXXXXXXXXXXXXXXXXXXXXYvs3rr")
+			return true;
 		if (getDid(nameObject.publickey).toLowerCase() != nameObject.did.toLowerCase() 
 			|| getAddress(nameObject.publickey).toLowerCase() != nameObject["ela.address"].toLowerCase())
 			return false;
