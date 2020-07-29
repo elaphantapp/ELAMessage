@@ -36,7 +36,33 @@ $(function () {
 	var loginElaphant = function() {
 		var random = Math.floor(Math.random() * 100000000);
 		setProfile("random", random);
-		var url = "https://launch.elaphant.app/?appName=ELAMessenger&appTitle=ELAMessenger&autoRedirect=True&redirectURL=elaphant%3A%2F%2Fidentity%3FAppID%3Dac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290%26AppName%3DMini%20Apps%26RandomNumber%3D"+random+"%26DID%3DibxNTG1hBPK1rZuoc8fMy4eFQ96UYDAQ4J%26PublicKey%3D034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55%26ReturnUrl%3Dhttps%253A%252F%252Felamessenger.elaphant.app%26RequestInfo%3DELAAddress%2CBTCAddress%2CETHAddress"
+
+		var appTitle = "CryptoName";
+		var developerDID = "ibxNTG1hBPK1rZuoc8fMy4eFQ96UYDAQ4J";
+		var appID = "ac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290";
+		var appName = "Mini Apps";
+		var publicKey = "034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55";
+		var returnUrl = window.returnURL || "https://elamessenger.elaphant.app";
+
+
+
+		var elaphantURL = "elaphant://identity?" +
+							"AppID=" + appID +
+							"&AppName=" + encodeURIComponent(appName) +
+							"&RandomNumber="+random+
+							"&DID=" + developerDID +
+							"&PublicKey=" + publicKey +
+							"&ReturnUrl=" + encodeURIComponent(returnUrl) +
+							"&RequestInfo=ELAAddress,BTCAddress,ETHAddress";
+
+		var url = "https://launch.elaphant.app/?appName="+encodeURIComponent(appTitle)+
+				  	"&appTitle="+encodeURIComponent(appTitle)+
+				  	"&autoRedirect=True&redirectURL="+encodeURIComponent(elaphantURL);
+
+
+		// var url = "https://launch.elaphant.app/?appName=ELAMessenger&appTitle=ELAMessenger&autoRedirect=True&redirectURL=elaphant%3A%2F%2Fidentity%3FAppID%3Dac89a6a3ff8165411c8426529dccde5cd44d5041407bf249b57ae99a6bfeadd60f74409bd5a3d81979805806606dd2d55f6979ca467982583ac734cf6f55a290%26AppName%3DMini%20Apps%26RandomNumber%3D"+random+"%26DID%3DibxNTG1hBPK1rZuoc8fMy4eFQ96UYDAQ4J%26PublicKey%3D034c51ddc0844ff11397cc773a5b7d94d5eed05e7006fb229cf965b47f19d27c55%26"
+		// "ReturnUrl%3Dhttps%253A%252F%252Felamessenger.elaphant.app"
+		// "%26RequestInfo%3DELAAddress%2CBTCAddress%2CETHAddress"
 		window.location.href = url;		
 	}
 
@@ -44,6 +70,7 @@ $(function () {
 	url.searchParams.delete('OrderID');
 	url.searchParams.delete('TXID');
 	var entryURL = url.href;
+	window.returnURL = window.location.href.split('?')[0];
 
 	let params = new URLSearchParams(url.search.substring(1));
 	var identityData = params.get("Data");
@@ -126,7 +153,6 @@ $(function () {
 	window.currentDID = currentDID;
 	window.currentName = currentName;
 	window.currentAddress = currentAddress;
-	window.returnURL = window.location.href.split('?')[0];
 
 
 	window.escapeHTML = function(a){
@@ -162,27 +188,36 @@ $(function () {
 					this.followingData[item] = [];
 				}
 			}
+			
+			elaMsg.getMyMessages(currentAddress, "WAL", "", 0, 300).then(function(result) {
+				if (result && result.length > 0) {
+					for (var item of result) {
+						pthis.followingData[item.t] = [];	
+					}
+				}
+				return pthis.followingData;
+			}).then(function() {
+				for (var key in pthis.followingData) {
+					(async function() {
+						var target = key;
 
-			for (var key in this.followingData) {
-				(async function() {
-					var target = key;
-
-					elaMsg._getKeyOfName(target, "ela.address", true).then (function(address) {
-						if (!address || address.length < 34 )
-							return;
-						return elaMsg.getMyMessages(address, "WAL", target, 0, 300);
-					}).then (function(result) {
-						if (result && result.length > 0) {
-							pthis.following.push({"key":target, "value":result, "unread": localStorage.getItem(currentDID+"_"+currentName+"_#"+target+"_unreadmessage")});
-						}
-						else {
-							pthis.following.push({"key":target, "value":[], "unread": 0});
-						}
-					}).catch (err => {
-						console.log(err);
-					})
-				})();
-			}
+						elaMsg._getKeyOfName(target, "ela.address", true).then (function(address) {
+							if (!address || address.length < 34 )
+								return;
+							return elaMsg.getMyMessages(address, "WAL", target, 0, 300);
+						}).then (function(result) {
+							if (result && result.length > 0) {
+								pthis.following.push({"key":target, "value":result, "unread": localStorage.getItem(currentDID+"_"+currentName+"_#"+target+"_unreadmessage")});
+							}
+							else {
+								pthis.following.push({"key":target, "value":[], "unread": 0});
+							}
+						}).catch (err => {
+							console.log(err);
+						})
+					})();
+				}
+			});
 		}
 	});
 
