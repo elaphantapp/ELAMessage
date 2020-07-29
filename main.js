@@ -147,7 +147,7 @@ $(function () {
 		el:"#messageWall",
 		data: {
 			"following": [],
-			"followingData": {"elastos":[], "elaphant":[], "bbs":[]}
+			"followingData": {"burn":[], "elaphant":[], "bbs":[]}
 		},
 		methods: {
 
