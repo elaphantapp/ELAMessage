@@ -97,7 +97,15 @@ class ElaMessage {
 	}
 
 	getRawMessages(elaAddress, cmd, page, size) {
-		return fetch('https://node1.elaphant.app/api/v3/history/' + elaAddress + '?' + "pageSize="+size+"&pageNum="+(page+1)+"&order=desc").then(function(response) {
+		var url = 'https://node1.elaphant.app/';
+		if (elaAddress == "ELANULLXXXXXXXXXXXXXXXXXXXXXYvs3rr") {
+			url += 'api/v1/history/' + elaAddress + '?' + "pageSize="+size+"&pageNum="+(page+1)+"&order=desc";
+		}
+		else {
+			url += 'api/v3/history/' + elaAddress + '?' + "pageSize="+size+"&pageNum="+(page+1)+"&order=desc";
+		}
+
+		return fetch(url).then(function(response) {
 			    return response.json();
 			}).then(function(ret) {
 				if (!ret.result.History)
