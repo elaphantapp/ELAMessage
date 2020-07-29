@@ -354,7 +354,8 @@ $(function () {
 				do {
 					var nameInfo = await elaMsg._getNameInfo(receiver, bForce);
 					var owner = await elaMsg._getOwner(receiver, bForce);
-					if (elaMsg._verifyMessagerName(nameInfo, owner)) {
+					if ((this.cmd == "MSG" && elaMsg._verifyMessagerName(nameInfo, owner)) ||
+						(this.cmd == "WAL" && elaMsg._verifyMessageWallName(nameInfo, owner))) {
 						this.recipientChecked = 1;
 						$("#receiver-name").css("color", "green").css("border-color", "green");
 						return;
