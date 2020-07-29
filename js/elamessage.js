@@ -98,12 +98,7 @@ class ElaMessage {
 
 	getRawMessages(elaAddress, cmd, page, size) {
 		var url = 'https://node1.elaphant.app/';
-		if (elaAddress == "ELANULLXXXXXXXXXXXXXXXXXXXXXYvs3rr") {
-			url += 'api/v1/history/' + elaAddress + '?' + "pageSize="+size+"&pageNum="+(page+1)+"&order=desc";
-		}
-		else {
-			url += 'api/v3/history/' + elaAddress + '?' + "pageSize="+size+"&pageNum="+(page+1)+"&order=desc";
-		}
+		url += 'api/v3/history/' + elaAddress + '?' + "pageSize="+size+"&pageNum="+(page+1)+"&order=desc";
 
 		return fetch(url).then(function(response) {
 			    return response.json();
