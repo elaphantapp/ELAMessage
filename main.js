@@ -107,7 +107,7 @@ $(function () {
 					var myName = this.myName.trim().toLowerCase();
 
 					var owner = await elaMsg._getOwner(myName);
-					var nameInfo = await elaMsg._getNameInfo(myName);
+					var nameInfo = await elaMsg._getNameInfo(myName, true);
 
 					if (nameInfo["ela.address"] != currentAddress || nameInfo["did"] != currentDID) {
 						alert("Please set the name corresponding to the elephant wallet.");
